@@ -34,6 +34,26 @@ export class ServiceResponse<T = null> {
     return new ServiceResponse(false, message, responseObject, statusCode);
   }
 
+  static badRequest(message = 'Something went wrong.') {
+    return this.failure(message, null, StatusCodes.BAD_REQUEST);
+  }
+
+  static notFound(message = 'Resource not found') {
+    return this.failure(message, null, StatusCodes.NOT_FOUND);
+  }
+
+  static validationError(
+    message = 'There were one or more validation errors.',
+  ) {
+    return this.failure(message, null, StatusCodes.UNPROCESSABLE_ENTITY);
+  }
+
+  static serverError(
+    message = 'Something went wrong. Please try again later.',
+  ) {
+    return this.failure(message, null, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
   toResponse() {
     return {
       success: this.success,

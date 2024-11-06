@@ -2,6 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import logger from 'morgan';
 import createError from 'http-errors';
 import { envService } from './common/config';
+import { StatusCodes } from 'http-status-codes';
+import { ServiceResponse } from './common/serviceResponse';
 
 export const app = express();
 app.use(logger('dev'));
@@ -17,17 +19,20 @@ app.get('/', (_req: Request, res: Response): void => {
 
 // catch 404 and forward to error handler
 app.use(function (_req: Request, _res: Response, next: NextFunction) {
-  next(createError(404));
+  next(createError(StatusCodes.NOT_FOUND, 'Resource not found'));
 });
 
-// error handler
-app.use(function (err: any, req: Request, res: Response) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err: any, _req: Request, res: Response, _next: NextFunction) {
+  console.error(err);
 
-  res.status(err.status || 500);
-  res.send({ message: 'error', error: err.status });
+  const message =
+    err.status === StatusCodes.NOT_FOUND
+      ? 'Resource not found'
+      : 'Something went wrong. Please try again later.';
+
+  const statusCode = err.status || StatusCodes.INTERNAL_SERVER_ERROR;
+  const serviceResponse = ServiceResponse.failure(message, null, statusCode);
+  res.status(statusCode).send(serviceResponse.toResponse());
 });
 
 async function startServer(): Promise<void> {

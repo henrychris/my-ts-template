@@ -1,12 +1,21 @@
 import express, { Request, Response, NextFunction } from 'express';
-import logger from 'morgan';
 import createError from 'http-errors';
-import { envService } from './common/config';
 import { StatusCodes } from 'http-status-codes';
 import { ServiceResponse } from './common/serviceResponse';
+import rootRouter from './common/routes/index';
+import { envService } from './common/config';
+import cors from 'cors';
 
 export const app = express();
-app.use(logger('dev'));
+
+const corsOrigins = envService.env.CORS.ORIGIN.split(',');
+app.use(
+  cors({
+    origin: corsOrigins,
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -16,6 +25,7 @@ app.get('/', (_req: Request, res: Response): void => {
 });
 
 // add routes here
+app.use('/api/', rootRouter);
 
 // catch 404 and forward to error handler
 app.use(function (_req: Request, _res: Response, next: NextFunction) {
@@ -35,17 +45,4 @@ app.use(function (err: any, _req: Request, res: Response, _next: NextFunction) {
   res.status(statusCode).send(serviceResponse.toResponse());
 });
 
-async function startServer(): Promise<void> {
-  const PORT = envService.env.PORT;
-
-  if (envService.env.NODE_ENV !== 'test') {
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
-  }
-}
-
-startServer().catch((error) => {
-  console.error('Error starting the server:', error.message);
-  process.exit(1);
-});
+export default app;

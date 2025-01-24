@@ -34,6 +34,10 @@ export class ServiceResponse<T = null> {
     return new ServiceResponse(false, message, responseObject, statusCode);
   }
 
+  static ok<T>(message = 'Success', responseObject: T) {
+    return this.success(message, responseObject, StatusCodes.OK);
+  }
+
   static badRequest(message = 'Something went wrong.') {
     return this.failure(message, null, StatusCodes.BAD_REQUEST);
   }
@@ -44,14 +48,19 @@ export class ServiceResponse<T = null> {
 
   static validationError(
     message = 'There were one or more validation errors.',
+    obj: object | null = null,
   ) {
-    return this.failure(message, null, StatusCodes.UNPROCESSABLE_ENTITY);
+    return this.failure(message, obj, StatusCodes.UNPROCESSABLE_ENTITY);
   }
 
   static serverError(
     message = 'Something went wrong. Please try again later.',
   ) {
     return this.failure(message, null, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  static forbidden(message = 'Access denied.') {
+    return this.failure(message, null, StatusCodes.FORBIDDEN);
   }
 
   toResponse() {

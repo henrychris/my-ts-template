@@ -46,19 +46,15 @@ Alternatively, use [degit](https://github.com/Rich-Harris/degit) to clone the la
 ```text
 my-ts-template/
 ├── src/                # Application source code
-│   └── server.ts        # Main entry point
+│   └── index.ts        # Main entry point
+│   └── app.ts          # Express application setup
 │   └── common/
-│      └── middleware/
 │      └── util/
 │      └── config.ts
-│   └── database/
-│       └── migrations/
-│       └── models/
 │   └── features/
 │       └── placeholder/
-│          └── placeholderController.ts
-│          └── placeholderRoutes.ts
-│          └── placeholderValidators.ts
+│          └── placeholder.controller.ts
+│          └── placeholder.routes.ts
 │   └── types/
 ├── .eslintrc.json      # ESLint configuration
 ├── .prettierrc         # Prettier configuration
